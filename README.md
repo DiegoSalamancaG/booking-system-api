@@ -25,6 +25,7 @@ Construida con **Node.js, Express y PostgreSQL**, siguiendo principios de arquit
 - **Runtime:** Node.js
 - **Framework:** Express.js
 - **Database:** PostgreSQL
+- **ORM:** Prisma (Type-safe database client)
 - **Authentication:** JSON Web Tokens (JWT)
 - **Architecture:** Service-Layer Pattern
 
@@ -33,6 +34,7 @@ Construida con **Node.js, Express y PostgreSQL**, siguiendo principios de arquit
 ## Project Structure
 
 ```text
+prisma/          # Schema de la base de datos y migraciones
 src/
 ├── config/      # Configuraciones de DB y variables de entorno
 ├── controllers/ # Orquestación de peticiones y respuestas
@@ -78,7 +80,13 @@ Sigue los pasos mostrados a continuacion para correr el proyecto:
     npm install
     ```
 
-3.  **Configure environment variables**
+3. **Setup Prisma**
+    ```bash
+    npx prisma generate    
+    npx prisma migrate dev 
+    ```
+
+4.  **Configure environment variables**
 
     Crea un nuevo archivo .env en la raiz del directorio y agrega tus credenciales:
 
@@ -90,7 +98,7 @@ Sigue los pasos mostrados a continuacion para correr el proyecto:
     NODE_ENV=development
     ```
 
-4.  **Initialize the App**
+5.  **Initialize the App**
 
     ```bash
     npm run dev
