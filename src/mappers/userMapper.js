@@ -5,7 +5,7 @@ class UserMapper {
             fullName: user.fullName,
             email: user.email,
             role: user.role,
-            isActive: user.isActive,
+            status: user.status,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt
         }

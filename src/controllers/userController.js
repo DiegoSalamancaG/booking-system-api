@@ -4,7 +4,6 @@ const { sendResponse } = require('../utils/responseHandler');
 class UserController {
 
     async createUser(req, res, next) {
-        console.log(req.body);
         try {
             const user = await UserService.createUser(req.body);
 

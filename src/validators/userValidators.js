@@ -6,8 +6,8 @@ const userSchema = z.object({
     password: z.string().min(4, "Password must be at least 4 characters long"),
     role: z.enum(['CLIENT', 'BARBER', 'ADMIN']).optional(),
     status: z.enum(['ACTIVE', 'INACTIVE', 'BLOCKED']).optional()
-})
+});
 
 module.exports = {
     userSchema
-}
+};

@@ -2,6 +2,7 @@ const UserRepository = require("../repositories/userRepository");
 const userMapper = require('../mappers/userMapper');
 const { hashPassword } = require('../utils/auth/hashPassword');
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
+const prisma = require("../config/prisma");
 
 class UserService {
 
@@ -30,6 +31,40 @@ class UserService {
 
         return userMapper.toResponse(newUser);
     }
+
+
+    // Método interno para crear usuario (usado por BarberService)
+    async createUserInternal(userData, tx = null) {
+    const db = tx || prisma;
+
+    const { fullName, email, password, role } = userData;
+    if (!fullName || !email || !password) {
+        throw new ValidationError('Missing required fields');
+    }
+
+    // Verificar email usando db, no repository
+    const existingUser = await db.user.findUnique({
+        where: { email }
+    });
+
+    if (existingUser) {
+        throw new ValidationError('Email already in use');
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    // Crear usuario dentro de la transacción
+    const newUser = await db.user.create({
+        data: {
+            fullName,
+            email,
+            password: hashedPassword,
+            role: role || 'CLIENT'
+        }
+    });
+    return newUser;
+}
+
 
     async getUserByEmail(email) {
         if (!email) {
