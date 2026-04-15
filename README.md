@@ -114,6 +114,7 @@ Sigue los pasos mostrados a continuacion para correr el proyecto:
 - POST /api/v1/auth/register
 
 **Users**
+
 Usuario del sistema
 - GET     /api/v1/users
 - GET     /api/v1/users/active
@@ -122,8 +123,14 @@ Usuario del sistema
 - PUT     /api/v1/users/
 - DELETE  /api/v1/users/:id
 
-**Barber**    (Proximamente)
+**Barber**
+
 Prestador del servicio (ej. barbero, medico, etc)
+- GET     /api/v1/barber
+- GET     /api/v1/barber/:id
+- POST    /api/v1/barber/
+- PUT     /api/v1/barber/
+- DELETE  /api/v1/barber/:id
 
 **Bookings**   (proximamente)
 Citas/reservas creadas
