@@ -36,8 +36,6 @@ model Barber {
   experienceYears Int     @map("experience_years")
   bio               String?
 
-  updatedAt         DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
-
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   reservations Reservation[]
 
