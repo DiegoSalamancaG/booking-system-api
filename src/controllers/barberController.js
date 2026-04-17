@@ -60,9 +60,10 @@ class BarberController {
     async deactivateBarber(req, res, next){
         try {
             const id = Number(req.params.id);
-            await BarberService.deactivateBarber(id);
+            const deactivatedBarber= await BarberService.deactivateBarber(id);
             sendResponse(res, {
                 message: 'Barber deactivated successfully',
+                data: deactivatedBarber
             });
         } catch (error) {
             next(error);

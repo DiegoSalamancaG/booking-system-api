@@ -17,6 +17,9 @@ model Reservation {
   startTime DateTime @map("start_time") @db.Timestamptz(6)
   endTime   DateTime @map("end_time")   @db.Timestamptz(6)
 
+  durationMinutes Int
+  priceAtBooking Decimal @map("price_at_booking") @db.Decimal(10,2)
+
   notes     String?
 
   status    ReservationStatus @default(SCHEDULED)
@@ -28,6 +31,7 @@ model Reservation {
   client  User   @relation("ClientReservations", fields: [clientId], references: [id], onDelete: Cascade)
   service Service @relation(fields: [serviceId], references: [id])
 
+  @@index([barberId, startTime, endTime])
   @@map("reservations")
 }
 
@@ -43,18 +47,19 @@ model Barber {
 }
 
 model Service {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(50)
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(50)
   description String?
-  duration  Int // minutos
-  price     Float
-  isActive  Boolean  @default(true) @map("is_active")
+  durationMinutes Int
+  price       Decimal  @db.Decimal(10,2)
+  isActive    Boolean  @default(true) @map("is_active")
 
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
 
   reservations Reservation[]
 
+  @@index([isActive])
   @@map("services")
 }
 
