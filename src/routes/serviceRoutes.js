@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router();
 const ServiceController = require("../controllers/serviceController");
 const validate = require("../middlewares/validateMiddlewares");
-const { serviceSchema } = require("../validators/serviceValidators");
+const { serviceSchema } = require("../validators/serviceSchema");
 const {authenticate, restrictTo } = require("../middlewares/authMiddleawares");
 
 router.use(authenticate);

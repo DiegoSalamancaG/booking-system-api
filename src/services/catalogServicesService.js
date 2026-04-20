@@ -1,7 +1,7 @@
 const ServicesRespository = require("../repositories/servicesRepository");
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
 const ServiceMapper = require("../mappers/serviceMapper");
-const { serviceSchema, serviceUpdateSchema} = require("../validators/serviceValidators");
+const { serviceSchema, serviceUpdateSchema } = require("../validators/serviceSchema");
 
 class CatalogServicesService {
 
