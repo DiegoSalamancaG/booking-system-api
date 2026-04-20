@@ -8,7 +8,7 @@ const { ValidationError,
 const UserRepository = require("../repositories/userRepository");
 const UserMapper = require("../mappers/userMapper");
 const dotenv = require("dotenv");
-const { registerSchema, loginSchema } = require("../validators/authSchema");
+const { registerSchema, loginSchema } = require("../schemas/authSchema");
 
 class authService {
     async registerService(userData){

@@ -4,7 +4,7 @@ const BarberRepository = require("../repositories/barberRepository");
 const BarberMapper = require("../mappers/barberMapper");
 const UserService = require("../services/userServices");
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
-const { barberCreateSchema, barberUpdateSchema } = require("../validators/barberSchema");
+const { barberCreateSchema, barberUpdateSchema } = require("../schemas/barberSchema");
 
 class BarberService {
 

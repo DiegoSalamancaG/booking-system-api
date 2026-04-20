@@ -17,7 +17,7 @@ class BarberMapper{
 
     toResponseList(barbers){
         if(!Array.isArray(barbers)) return [];
-        return barbers.map(barber => BarberMapper.toResponse(barber));
+        return barbers.map(barber => this.toResponse(barber));
     }
 }
 
