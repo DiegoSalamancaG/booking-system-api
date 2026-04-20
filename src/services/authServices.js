@@ -1,63 +1,56 @@
 const { comparePassword } = require("../utils/auth/comparePassword");
-const { hashPassword } = require("../utils/auth/hashPassword");
 const { generateToken } = require("../utils/auth/jwt");
-const { ValidationError, 
-    NotFoundError, 
-    ConflictError,
-    InternalServerError } = require('../errors/TypesError');
+
+const { ValidationError, ConflictError } = require('../errors/TypesError');
+
 const UserRepository = require("../repositories/userRepository");
+const UserService = require("../services/userServices");
 const UserMapper = require("../mappers/userMapper");
-const dotenv = require("dotenv");
+
 const { registerSchema, loginSchema } = require("../schemas/authSchema");
 
-class authService {
-    async registerService(userData){
+class AuthService {
+
+    async registerService(userData) {
+
         const validation = registerSchema.safeParse(userData);
         if (!validation.success) {
-            throw new ValidationError(validation.error.errors[0].message);
-        }
-        const { email, password, fullName } = validation.data;
-        if (!email || !password || !fullName) {
-            throw new ValidationError('Email, password, and full name are required');
-        }
-        const existingUser = await UserRepository.getUserByEmail(email);
-        if (existingUser) {
-            throw new ConflictError('Email is already in use');
+            throw new ValidationError(validation.error.issues[0].message);
         }
 
-        const hashedPassword = await hashPassword(password);
+        const newUser = await UserService.createUser(validation.data);
+        const token = generateToken({
+            id: newUser.id,
+            role: newUser.role
+        });
 
-        const newUser = await UserRepository.createUser({
-            fullName,
-            email,
-            password: hashedPassword,
-        })
-
-        if (!newUser || newUser.length === 0) {
-            throw new InternalServerError('Failed to create user');
-        }
-        return UserMapper.toResponse(newUser);
-
+        return {
+            token,
+            user: newUser //el userService ya mapea el usuario
+        };
     }
 
-    async loginService(email, password){
-        const validation = loginSchema.safeParse({ email, password });
+    async loginService(credentials) {
+
+        const validation = loginSchema.safeParse(credentials);
         if (!validation.success) {
-            throw new ValidationError(validation.error.errors[0].message);
+            throw new ValidationError(validation.error.issues[0].message);
         }
 
+        const { email, password } = validation.data;
         const user = await UserRepository.getUserByEmail(email);
         if (!user) {
-            throw new NotFoundError('Invalid credentials');
-        }
-
-        const isPasswordMatch = await comparePassword(password, user.password);
-        if (!isPasswordMatch) {
-            throw new NotFoundError('Invalid credentials');
+            throw new ValidationError('Invalid credentials');
         }
 
         if (user.status !== 'ACTIVE') {
-            throw new NotFoundError('User account is not active');
+            throw new ValidationError('User account is not active');
+        }
+
+        const isPasswordMatch = await comparePassword(password, user.password);
+
+        if (!isPasswordMatch) {
+            throw new ValidationError('Invalid credentials');
         }
 
         const token = generateToken({
@@ -65,12 +58,11 @@ class authService {
             role: user.role
         });
 
-        return{
+        return {
             token,
             user: UserMapper.toResponse(user)
-        }
-
+        };
     }
 }
 
-module.exports = new authService();
+module.exports = new AuthService();

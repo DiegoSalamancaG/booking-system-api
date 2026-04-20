@@ -9,7 +9,6 @@ router.use(authenticate);
 router.use(restrictTo("ADMIN"));
 
 router.get("/", userController.getAllUsers);
-router.get("/actives", userController.getAllActiveUsers);
 router.post("/", validate(userSchema), userController.createUser);
 router.get("/:id", userController.getUserById);
 router.put("/:id", userController.updateUser);

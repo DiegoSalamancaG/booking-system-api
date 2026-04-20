@@ -1,64 +1,64 @@
 const prisma = require("../config/prisma");
-const UserRepository = require("../repositories/userRepository");
+
 const BarberRepository = require("../repositories/barberRepository");
-const BarberMapper = require("../mappers/barberMapper");
+const UserRepository = require("../repositories/userRepository");
 const UserService = require("../services/userServices");
+
+const BarberMapper = require("../mappers/barberMapper");
+
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
 const { barberCreateSchema, barberUpdateSchema } = require("../schemas/barberSchema");
 
 class BarberService {
 
-    async createBarber(barberdata) {
-        const validation = barberCreateSchema.safeParse(barberdata);
+    async createBarber(barberData) {
+
+        const validation = barberCreateSchema.safeParse(barberData);
         if (!validation.success) {
-            throw new ValidationError(validation.error.errors[0].message);
+            throw new ValidationError(validation.error.issues[0].message);
         }
 
-        const { fullName, email, password, experienceYears, bio, role } = validation.data;
-        
-        //creamos el usuario primero
+        const { fullName, email, password, experienceYears, bio } = validation.data;
+
         const barber = await prisma.$transaction(async (tx) => {
+
             const newUser = await UserService.createUserInternal({
                 fullName,
                 email,
                 password,
-                role: 'BARBER',
-                status: 'ACTIVE'
+                role: 'BARBER'
             }, tx);
 
-            const existingBarber = await tx.barber.findUnique({
-                where: { userId: newUser.id }
-            });
+            const existingBarber = await BarberRepository.getBarberByUserId(newUser.id, tx);
             if (existingBarber) {
                 throw new ValidationError('Barber already exists for this user');
             }
 
-            //creamos el barbero asociado al usuario
-            const newBarber = await tx.barber.create({
-                data: {
-                    userId: newUser.id,
-                    experienceYears,
-                    bio
-                },
-                include : { user: true}
-            })
+            const newBarber = await BarberRepository.createBarber({
+                userId: newUser.id,
+                experienceYears,
+                bio
+            }, tx);
+
             return newBarber;
-        })
+        });
+
         return BarberMapper.toResponse(barber);
     }
 
-    async getAllBarbers() {
-        const barbers = await BarberRepository.getAllBarbers();
+    async getAllBarbers(filters = {}) {
+        const barbers = await BarberRepository.getAllBarbers(filters);
         return BarberMapper.toResponseList(barbers);
     }
 
-    async getBarberById(userId) {
+    async getBarberByUserId(userId) {
         const id = Number(userId);
+
         if (isNaN(id)) {
             throw new ValidationError('Invalid ID');
         }
 
-        const barber = await BarberRepository.getBarberById(id);
+        const barber = await BarberRepository.getBarberByUserId(id);
 
         if (!barber) {
             throw new NotFoundError('Barber not found');
@@ -67,54 +67,50 @@ class BarberService {
         return BarberMapper.toResponse(barber);
     }
 
-    async updateBarber(userId, updateData){
+    async updateBarber(userId, updateData) {
+
         const id = Number(userId);
         if (isNaN(id)) {
             throw new ValidationError('Invalid ID');
         }
+
         const validation = barberUpdateSchema.safeParse(updateData);
         if (!validation.success) {
-            throw new ValidationError(validation.error.errors[0].message);
+            throw new ValidationError(validation.error.issues[0].message);
         }
-        
+
         const { fullName, experienceYears, bio } = validation.data;
 
-        return await prisma.$transaction(async (tx)=>{
-            const existingBarber = await tx.barber.findUnique({
-                where: { userId: id },
-            });
+        const updatedBarber = await prisma.$transaction(async (tx) => {
+
+            const existingBarber = await BarberRepository.getBarberByUserId(id, tx);
             if (!existingBarber) {
                 throw new NotFoundError('Barber not found');
             }
-
-            // Actualizar campos específicos del usuario
-            if(fullName){
-                await tx.user.update({
-                    where: { id: id },
-                    data: {
-                        ...(fullName !== undefined && { fullName })
-                    }
-                });
+            
+            if (fullName !== undefined) {
+                await UserRepository.updateUser(id, { fullName }, tx);
             }
-            // Actualizar campos específicos del barbero
-            const updatedBarber = await tx.barber.update({
-                where: { userId: id },
-                data:{
-                    ...(experienceYears !== undefined && { experienceYears }),
-                    ...(bio !== undefined && { bio })
-                },
-                include: { user: true }
-            })
-            return BarberMapper.toResponse(updatedBarber);
-        })
+
+            const barber = await BarberRepository.updateBarber(id, {
+                ...(experienceYears !== undefined && { experienceYears }),
+                ...(bio !== undefined && { bio })
+            }, tx);
+
+            return barber;
+        });
+
+        return BarberMapper.toResponse(updatedBarber);
     }
 
-    async deactivateBarber(userId){
-        if (!userId || isNaN(userId)) {
+    async deactivateBarber(userId) {
+
+        const id = Number(userId);
+        if (isNaN(id)) {
             throw new ValidationError('Invalid ID');
         }
-        
-        const deactivatedBarber = await BarberRepository.deactivateBarber(userId);
+
+        const deactivatedBarber = await BarberRepository.deactivateBarber(id);
         if (!deactivatedBarber) {
             throw new NotFoundError('Barber not found');
         }

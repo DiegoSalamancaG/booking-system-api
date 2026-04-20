@@ -1,81 +1,94 @@
-const ServicesRespository = require("../repositories/servicesRepository");
+const ServiceRepository = require("../repositories/servicesRepository");
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
 const ServiceMapper = require("../mappers/serviceMapper");
 const { serviceSchema, serviceUpdateSchema } = require("../schemas/serviceSchema");
+const { parseBoolean } = require("../utils/queryParse")
 
 class CatalogServicesService {
 
     async createService(serviceData) {
-        const validationResult = serviceSchema.safeParse(serviceData)
-        if(!validationResult.success){
-            throw new ValidationError(validationResult.error.errors[0].message);
+
+        const validation = serviceSchema.safeParse(serviceData);
+        if (!validation.success) {
+            throw new ValidationError(validation.error.issues[0].message);
         }
-        const { name, description, durationMinutes, price}= serviceData;
-        const newService = await ServicesRespository.createService({
+
+        const { name, description, durationMinutes, price } = validation.data;
+
+        const newService = await ServiceRepository.createService({
             name,
             description,
-            price,
-            durationMinutes
-        })
+            durationMinutes,
+            price
+        });
 
         return ServiceMapper.toResponse(newService);
     }
 
-    async getAllServices() {
-        const services = await ServicesRespository.getAllServices();
+    async getAllServices(filters = {}) {
+        const parsedFilters = {};
+        if (filters.isActive !== undefined) {
+            parsedFilters.isActive = parseBoolean(filters.isActive);
+        }
+
+        const services = await ServiceRepository.getAllServices(parsedFilters);
         return ServiceMapper.toResponseList(services);
     }
 
-    async getAllActiveServices() {
-        const services = await ServicesRespository.getAllActiveServices();
-        return ServiceMapper.toResponseList(services);
-    }
+    async getServiceById(id) {
 
-    async getServicesByid(id){
-        if(!id || isNaN(id)){
+        const serviceId = Number(id);
+        if (!serviceId || isNaN(serviceId)) {
             throw new ValidationError("Invalid Id");
         }
-        const service = await ServicesRespository.getServiceById(id);
-        if(!service){
+
+        const service = await ServiceRepository.getServiceById(serviceId);
+        if (!service) {
             throw new NotFoundError("Service not found");
         }
+
         return ServiceMapper.toResponse(service);
     }
 
     async updateService(id, serviceData) {
-        if (!id || isNaN(id)) {
+
+        const serviceId = Number(id);
+        if (!serviceId || isNaN(serviceId)) {
             throw new ValidationError('Invalid ID');
         }
 
         const validation = serviceUpdateSchema.safeParse(serviceData);
         if (!validation.success) {
-            throw new ValidationError(validation.error.errors[0].message);
+            throw new ValidationError(validation.error.issues[0].message);
         }
 
-        if (Object.keys(validation.data).length === 0) {
+        const data = validation.data;
+        if (Object.keys(data).length === 0) {
             throw new ValidationError('No valid data provided for update');
         }
 
-        const updatedService = await ServicesRespository.updateService(id, validation.data);
+        const updatedService = await ServiceRepository.updateService(serviceId, data);
         if (!updatedService) {
             throw new NotFoundError('Service not found');
         }
 
         return ServiceMapper.toResponse(updatedService);
     }
-    async deactivateService(id){
-        if(!id || isNaN(id)){
+
+    async deactivateService(id) {
+
+        const serviceId = Number(id);
+        if (!serviceId || isNaN(serviceId)) {
             throw new ValidationError("Invalid Id");
         }
-        
-        const deactivateService = await ServicesRespository.deactivateService(id);
-        if(!deactivateService){
-            throw new NotFoundError("Service not found")
+
+        const deactivatedService = await ServiceRepository.deactivateService(serviceId);
+        if (!deactivatedService) {
+            throw new NotFoundError("Service not found");
         }
 
-        return ServiceMapper.toResponse(deactivateService);
+        return ServiceMapper.toResponse(deactivatedService);
     }
-
 }
 
 module.exports = new CatalogServicesService();

@@ -15,7 +15,7 @@ class ReservationService {
         return await prisma.$transaction(async (tx) => {
             const validation = reservationSchema.safeParse(reservationData);
             if (!validation.success) {
-                throw new ValidationError(validation.error.errors[0].message);
+                throw new ValidationError(validation.error.issues[0].message);
             }
 
             const { clientId, serviceId, barberId, reservationDate } = validation.data;

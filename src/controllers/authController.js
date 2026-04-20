@@ -4,8 +4,8 @@ const { sendResponse } = require("../utils/responseHandler");
 class authController {
     async loginController(req, res, next){
         try {
-            const { email, password } = req.body;
-            const result = await AuthService.loginService(email, password)
+            const data = req.body;
+            const result = await AuthService.loginService(data)
 
             sendResponse(res,{
                 message: 'Login successful',

@@ -49,7 +49,7 @@ class UserController {
 
     async getAllUsers(req, res, next) {
         try {
-            const users = await UserService.getAllUsers();
+            const users = await UserService.getAllUsers(req.query);
 
             sendResponse(res, {
                 message: 'List of users',
@@ -64,22 +64,6 @@ class UserController {
         }
     }
 
-    async getAllActiveUsers(req, res, next) {
-        try {
-            const users = await UserService.getAllActiveUsers();
-
-            sendResponse(res, {
-                message: 'List of active users',
-                data: users,
-                meta: {
-                    quantity: users.length
-                }
-            });
-
-        } catch (error) {
-            next(error);
-        }
-    }
 
     async updateUser(req, res, next) {
         try {

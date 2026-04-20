@@ -17,7 +17,7 @@ class ServiceController {
 
     async getAllServices(req,res,next){
         try {
-            const services = await CatalogServicesService.getAllServices();
+            const services = await CatalogServicesService.getAllServices(req.query);
             sendResponse(res,{
                 message:"List of services",
                 data: services,
@@ -30,20 +30,6 @@ class ServiceController {
         }
     }
 
-    async getAllActiveServices(req,res,next){
-        try {
-            const services = await CatalogServicesService.getAllActiveServices();
-            sendResponse(res,{
-                message: "List of actives services",
-                data: services,
-                meta: {
-                    quantity: services.length
-                }
-            })
-        } catch (error) {
-            next(error)
-        }
-    }
 
     async getServiceById(req, res, next) {
         try {
