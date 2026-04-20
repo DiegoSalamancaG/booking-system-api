@@ -1,5 +1,7 @@
 class ServicesMapper {
     toResponse(service){
+        if(!service)
+            return null;
         return {
             id: service.id,
             name: service.name,
@@ -11,6 +13,7 @@ class ServicesMapper {
     }
 
     toResponseList(services){
+        if(!Array.isArray(services)) return [];
         return services.map(service => this.toResponse(service));
     }
 }

@@ -17,7 +17,7 @@ class ServiceController {
 
     async getAllServices(req,res,next){
         try {
-            const services = CatalogServicesService.getAllServices();
+            const services = await CatalogServicesService.getAllServices();
             sendResponse(res,{
                 message:"List of services",
                 data: services,
@@ -32,7 +32,7 @@ class ServiceController {
 
     async getAllActiveServices(req,res,next){
         try {
-            const services = CatalogServicesService.getAllActiveServices();
+            const services = await CatalogServicesService.getAllActiveServices();
             sendResponse(res,{
                 message: "List of actives services",
                 data: services,
@@ -48,7 +48,7 @@ class ServiceController {
     async getServiceById(req, res, next) {
         try {
             const id = Number(req.params.id);
-            const service = await CatalogServicesService.getServiceById(id);
+            const service = await CatalogServicesService.getServicesByid(id);
             sendResponse(res, {
                 message: "Service found",
                 data: service

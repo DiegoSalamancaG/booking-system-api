@@ -3,19 +3,19 @@ const prisma = require("../config/prisma");
 class ServicesRespository {
 
     async createService (serviceData){
-        return prisma.service.create({
+        return await prisma.service.create({
             data: serviceData
         })
     }
 
     async getServiceById(id){
-        return prisma.service.findUnique({
+        return await prisma.service.findUnique({
             where: { id }
         })
     }
 
     async getAllServices(){
-        return prisma.service.findMany();
+        return await prisma.service.findMany();
     }
 
     async getAllActiveServices(){
@@ -25,14 +25,14 @@ class ServicesRespository {
     }
 
     async updateService(id, serviceData){
-        return prisma.service.update({
+        return await prisma.service.update({
             where: { id },
             data: serviceData
         })
     }
 
     async deactivateService(id){
-        return prisma.service.update({
+        return await prisma.service.update({
             where: { id },
             data: { isActive: false }
         })

@@ -1,22 +1,16 @@
 const ServicesRespository = require("../repositories/servicesRepository");
-const { ServicesMapper } = require("../mappers/serviceMapper")
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
 const serviceMapper = require("../mappers/serviceMapper");
+const { serviceSchema } = require("../validators/serviceValidators");
 
 class CatalogServicesService {
 
     async createService(serviceData) {
+        const validationResult = serviceSchema.safeParse(serviceData)
+        if(!validationResult.success){
+            throw new ValidationError(validationResult.error.errors[0].message);
+        }
         const { name, description, durationMinutes, price}= serviceData;
-        if(!name || !description || !price){
-            throw new ValidationError("Missing required fields")
-        }
-        if(durationMinutes<=0){
-            throw new ValidationError("Duration must be greater than 0")
-        }
-        if(price<=0){
-            throw new ValidationError("Price must be greater than 0")
-        }
-
         const newService = await ServicesRespository.createService({
             name,
             description,
@@ -28,34 +22,29 @@ class CatalogServicesService {
     }
 
     async getAllServices() {
-
-        const services = await ServiceRepository.getAllServices();
-        if (!services.length===0) {
-            throw new NotFoundError('No services found');
-        }
+        const services = await ServicesRespository.getAllServices();
         return serviceMapper.toResponseList(services);
     }
 
     async getAllActiveServices() {
-        const services = await ServiceRepository.getAllActiveServicess();
-        if (!services.length===0) {
-            throw new NotFoundError('No active services found');
+        const services = await ServicesRespository.getAllActiveServices();
+        return serviceMapper.toResponseList(services);
+    }
+
+    async getServicesByid(id){
+        if(!id || isNaN(id)){
+            throw new ValidationError("Invalid Id");
         }
-    return serviceMapper.toResponseList(services);
+        const service = await ServicesRespository.getServiceById(id);
+        if(!service){
+            throw new NotFoundError("Service not found");
+        }
+        return serviceMapper.toResponse(service);
     }
 
     async updateService(id, serviceData) {
         if (!id || isNaN(id)) {
             throw new ValidationError('Invalid ID');
-        }
-        if (!serviceData || Object.keys(serviceData).length === 0) {
-            throw new ValidationError('No data provided for update');
-        }
-        if (serviceData.durationMinutes !== undefined && serviceData.durationMinutes <= 0) {
-            throw new ValidationError('Duration must be greater than 0');
-        }
-        if (serviceData.price !== undefined && serviceData.price <= 0) {
-            throw new ValidationError('Price must be greater than 0');
         }
 
         // Validar campos permitidos
@@ -67,14 +56,13 @@ class CatalogServicesService {
             throw new ValidationError("Invalid field provided");
         }
 
-        const updatedService = await ServiceRepository.updateService(id, serviceData);
+        const updatedService = await ServicesRespository.updateService(id, serviceData);
         if (!updatedService) {
             throw new NotFoundError('Service not found');
         }
 
-        return ServicesMapper.toResponse(updatedService);
+        return serviceMapper.toResponse(updatedService);
     }
-
     async deactivateService(id){
         if(!id || isNaN(id)){
             throw new ValidationError("Invalid Id");
@@ -85,7 +73,7 @@ class CatalogServicesService {
             throw new NotFoundError("Service not found")
         }
 
-        return ServicesMapper.toResponse(deactivateService);
+        return serviceMapper.toResponse(deactivateService);
     }
 
 }
