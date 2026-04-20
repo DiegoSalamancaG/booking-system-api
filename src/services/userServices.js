@@ -3,7 +3,7 @@ const UserRepository = require("../repositories/userRepository");
 const UserMapper = require('../mappers/userMapper');
 const { hashPassword } = require('../utils/auth/hashPassword');
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
-const { userSchema, userUpdateSchema } = require('../validators/userValidators');
+const { userSchema, userUpdateSchema } = require('../validators/userSchema');
 
 class UserService {
 

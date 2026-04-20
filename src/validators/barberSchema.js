@@ -1,5 +1,5 @@
 const { z } = require("zod");
-const { userSchema } = require("./userValidators");
+const { userSchema } = require("./userSchema");
 const { createBarber } = require("../repositories/barberRepository");
 
 const barberSchema = z.object({
