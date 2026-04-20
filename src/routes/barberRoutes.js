@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const BarberController = require("../controllers/barberController");
 const validate = require("../middlewares/validateMiddlewares");
-const { barberCreateSchema } = require("../validators/barberValidators");
+const { barberCreateSchema } = require("../validators/barberSchemas");
 const { authenticate, restrictTo} = require("../middlewares/authMiddleawares");
 
 router.use(authenticate);
