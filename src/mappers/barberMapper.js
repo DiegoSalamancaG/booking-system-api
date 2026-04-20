@@ -1,4 +1,4 @@
-class barberMapper{
+class BarberMapper{
     toResponse(barber){
         if (!barber) return null;
         return {
@@ -11,12 +11,14 @@ class barberMapper{
                 email: barber.user.email,
                 role: barber.user.role,
                 status: barber.user.status
-            } : null
+            }: null
         }
     }
 
     toResponseList(barbers){
-        return barbers.map(barber => this.toResponse(barber));
+        if(!Array.isArray(barbers)) return [];
+        return barbers.map(barber => BarberMapper.toResponse(barber));
     }
 }
-module.exports = new barberMapper();
+
+module.exports = new BarberMapper();

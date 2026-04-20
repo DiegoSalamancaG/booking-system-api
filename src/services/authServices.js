@@ -8,11 +8,16 @@ const { ValidationError,
 const UserRepository = require("../repositories/userRepository");
 const UserMapper = require("../mappers/userMapper");
 const dotenv = require("dotenv");
+const { registerSchema, loginSchema } = require("../validators/authValidators");
 dotenv.config();
 
 class authService {
     async registerService(userData){
-        const { email, password, fullName } = userData;
+        const validation = registerSchema.safeParse(userData);
+        if (!validation.success) {
+            throw new ValidationError(validation.error.errors[0].message);
+        }
+        const { email, password, fullName } = validation.data;
         if (!email || !password || !fullName) {
             throw new ValidationError('Email, password, and full name are required');
         }
@@ -37,8 +42,9 @@ class authService {
     }
 
     async loginService(email, password){
-        if (!email || !password) {
-            throw new ValidationError('Email and password are required');
+        const validation = loginSchema.safeParse({ email, password });
+        if (!validation.success) {
+            throw new ValidationError(validation.error.errors[0].message);
         }
 
         const user = await UserRepository.getUserByEmail(email);

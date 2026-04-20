@@ -4,29 +4,26 @@ const BarberRepository = require("../repositories/barberRepository");
 const BarberMapper = require("../mappers/barberMapper");
 const UserService = require("../services/userServices");
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
-const barberMapper = require("../mappers/barberMapper");
-const barberRepository = require("../repositories/barberRepository");
+const { barberCreateSchema, barberUpdateSchema } = require("../validators/barberValidators");
 
 class BarberService {
 
     async createBarber(barberdata) {
-        const { fullName, email, password, role, experienceYears, bio } = barberdata;
-        console.log("Received barber data:", barberdata);
-        if(!fullName || !email || !password){
-            throw new ValidationError("Missing user required fields");
-        }
-        if(!experienceYears || !bio){
-            throw new ValidationError("Missing barber required fields");
+        const validation = barberCreateSchema.safeParse(barberdata);
+        if (!validation.success) {
+            throw new ValidationError(validation.error.errors[0].message);
         }
 
-        // Crear usuario primero
+        const { fullName, email, password, experienceYears, bio, role } = validation.data;
+        
+        //creamos el usuario primero
         const barber = await prisma.$transaction(async (tx) => {
             const newUser = await UserService.createUserInternal({
                 fullName,
                 email,
                 password,
-                role: role || 'BARBER',
-                status: 'active'
+                role: 'BARBER',
+                status: 'ACTIVE'
             }, tx);
 
             const existingBarber = await tx.barber.findUnique({
@@ -36,6 +33,7 @@ class BarberService {
                 throw new ValidationError('Barber already exists for this user');
             }
 
+            //creamos el barbero asociado al usuario
             const newBarber = await tx.barber.create({
                 data: {
                     userId: newUser.id,
@@ -51,18 +49,16 @@ class BarberService {
 
     async getAllBarbers() {
         const barbers = await BarberRepository.getAllBarbers();
-        if(barbers.length === 0){
-            throw new NotFoundError('No barbers found');
-        }
         return BarberMapper.toResponseList(barbers);
     }
 
     async getBarberById(userId) {
-        if (!userId || isNaN(userId)) {
+        const id = Number(userId);
+        if (isNaN(id)) {
             throw new ValidationError('Invalid ID');
         }
 
-        const barber = await BarberRepository.getBarberById(userId);
+        const barber = await BarberRepository.getBarberById(id);
 
         if (!barber) {
             throw new NotFoundError('Barber not found');
@@ -72,14 +68,20 @@ class BarberService {
     }
 
     async updateBarber(userId, updateData){
-        const {fullName, experienceYears, bio} = updateData;
-        if (!userId || isNaN(userId)) {
+        const id = Number(userId);
+        if (isNaN(id)) {
             throw new ValidationError('Invalid ID');
         }
+        const validation = barberUpdateSchema.safeParse(updateData);
+        if (!validation.success) {
+            throw new ValidationError(validation.error.errors[0].message);
+        }
+        
+        const { fullName, experienceYears, bio } = validation.data;
 
         return await prisma.$transaction(async (tx)=>{
             const existingBarber = await tx.barber.findUnique({
-                where: { userId },
+                where: { userId: id },
             });
             if (!existingBarber) {
                 throw new NotFoundError('Barber not found');
@@ -88,7 +90,7 @@ class BarberService {
             // Actualizar campos específicos del usuario
             if(fullName){
                 await tx.user.update({
-                    where: { id:userId},
+                    where: { id: id },
                     data: {
                         ...(fullName !== undefined && { fullName })
                     }
@@ -96,7 +98,7 @@ class BarberService {
             }
             // Actualizar campos específicos del barbero
             const updatedBarber = await tx.barber.update({
-                where: { userId },
+                where: { userId: id },
                 data:{
                     ...(experienceYears !== undefined && { experienceYears }),
                     ...(bio !== undefined && { bio })
@@ -111,6 +113,7 @@ class BarberService {
         if (!userId || isNaN(userId)) {
             throw new ValidationError('Invalid ID');
         }
+        
         const deactivatedBarber = await BarberRepository.deactivateBarber(userId);
         if (!deactivatedBarber) {
             throw new NotFoundError('Barber not found');
@@ -118,8 +121,6 @@ class BarberService {
 
         return BarberMapper.toResponse(deactivatedBarber);
     }
-
-
 
 }
 

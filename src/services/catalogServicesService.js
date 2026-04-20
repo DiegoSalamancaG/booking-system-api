@@ -1,7 +1,7 @@
 const ServicesRespository = require("../repositories/servicesRepository");
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
-const serviceMapper = require("../mappers/serviceMapper");
-const { serviceSchema } = require("../validators/serviceValidators");
+const ServiceMapper = require("../mappers/serviceMapper");
+const { serviceSchema, serviceUpdateSchema} = require("../validators/serviceValidators");
 
 class CatalogServicesService {
 
@@ -18,17 +18,17 @@ class CatalogServicesService {
             durationMinutes
         })
 
-        return serviceMapper.toResponse(newService);
+        return ServiceMapper.toResponse(newService);
     }
 
     async getAllServices() {
         const services = await ServicesRespository.getAllServices();
-        return serviceMapper.toResponseList(services);
+        return ServiceMapper.toResponseList(services);
     }
 
     async getAllActiveServices() {
         const services = await ServicesRespository.getAllActiveServices();
-        return serviceMapper.toResponseList(services);
+        return ServiceMapper.toResponseList(services);
     }
 
     async getServicesByid(id){
@@ -39,7 +39,7 @@ class CatalogServicesService {
         if(!service){
             throw new NotFoundError("Service not found");
         }
-        return serviceMapper.toResponse(service);
+        return ServiceMapper.toResponse(service);
     }
 
     async updateService(id, serviceData) {
@@ -47,21 +47,21 @@ class CatalogServicesService {
             throw new ValidationError('Invalid ID');
         }
 
-        // Validar campos permitidos
-        const allowedFields = ["name", "description","durationMinutes","price"];
-        const invalidFields = Object.keys(serviceData).filter(
-            key => !allowedFields.includes(key)
-        )
-        if(invalidFields.length > 0){
-            throw new ValidationError("Invalid field provided");
+        const validation = serviceUpdateSchema.safeParse(serviceData);
+        if (!validation.success) {
+            throw new ValidationError(validation.error.errors[0].message);
         }
 
-        const updatedService = await ServicesRespository.updateService(id, serviceData);
+        if (Object.keys(validation.data).length === 0) {
+            throw new ValidationError('No valid data provided for update');
+        }
+
+        const updatedService = await ServicesRespository.updateService(id, validation.data);
         if (!updatedService) {
             throw new NotFoundError('Service not found');
         }
 
-        return serviceMapper.toResponse(updatedService);
+        return ServiceMapper.toResponse(updatedService);
     }
     async deactivateService(id){
         if(!id || isNaN(id)){
@@ -73,7 +73,7 @@ class CatalogServicesService {
             throw new NotFoundError("Service not found")
         }
 
-        return serviceMapper.toResponse(deactivateService);
+        return ServiceMapper.toResponse(deactivateService);
     }
 
 }

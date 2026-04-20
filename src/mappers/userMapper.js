@@ -1,5 +1,6 @@
 class UserMapper {
     toResponse(user) {
+        if(!user) return null;
         return{
             id: user.id,
             fullName: user.fullName,
@@ -12,6 +13,7 @@ class UserMapper {
     }
 
     toResponseList(users){
+        if(!Array.isArray(users)) return [];
         return users.map( user => this.toResponse(user))
     }
 }
