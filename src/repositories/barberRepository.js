@@ -1,43 +1,62 @@
-const { includes } = require("zod");
+const { fi } = require("zod/locales");
 const prisma = require("../config/prisma");
 
 class BarberRepository {
-    async createBarber(barberData) {
-        return await prisma.barber.create({
-            data: barberData
+    
+    async createBarber(barberData, tx = null) {
+        const db = tx || prisma;
+
+        return await db.barber.create({
+            data: barberData,
+            include:{ user: true }
         });
     }
 
-    async getBarberByEmail(email) {
-        return await prisma.barber.findUnique({
-            where: { email },
-            include : { user: true }
-        });
-    }
+    async getBarberById(userId, tx = null) {
+        const db = tx || prisma;
 
-    async getBarberById(userId){
-        return await prisma.barber.findUnique({
+        return await db.barber.findUnique({
             where: { userId },
             include : { user: true }
         })
     }
 
-    async getAllBarbers() {
-        return await prisma.barber.findMany({
-            where:{ user: { status: "ACTIVE" } },
+    async getAllBarbers(filters= {}, tx = null) {
+        const db = tx || prisma;
+        const where = {
+            user: {}
+        };
+
+        if(filters.status){
+            where.user.status = filters.status;
+        }
+
+        return await db.barber.findMany({
+            where,
+            include: { user: true },
+            orderBy: { userId: 'desc' }
+        });
+    }
+
+    async updateBarber(id, barberData, tx = null) {
+        const db = tx || prisma;
+
+        const existing = await db.barber.findUnique({ where: { userId: id } });
+        if (!existing) return null;
+
+        return await db.barber.update({
+            where: { id },
+            data: barberData,
             include: { user: true }
         });
     }
 
-    async updateBarber(id, barberData) {
-        return await prisma.barber.update({
-            where: { id },
-            data: barberData
-        });
-    }
-
-    async deactivateBarber(userId) {
-        return await prisma.barber.update({
+    async deactivateBarber(userId, tx = null) {
+        const db = tx || prisma;
+        const existing = await db.barber.findUnique({ where: { userId }});
+        if (!existing) return null;
+        
+        return await db.barber.update({
             where: { userId },
             data: { user: { update: { status: 'INACTIVE' } } },
             include: { user: true }
