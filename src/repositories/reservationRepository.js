@@ -56,7 +56,12 @@ class ReservationRepository {
 
         return db.reservation.update({
             where: { id },
-            data
+            data,
+            include: {
+                barber: { include: { user: true } },
+                client: true,
+                service: true
+            }
         });
     }
 

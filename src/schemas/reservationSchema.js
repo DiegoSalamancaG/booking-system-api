@@ -9,26 +9,30 @@ const reservationSchema = z.object({
         .positive("Invalid service ID"),
     startTime: z.coerce
         .date()
-        .refine(date => date > new Date(), "Start time must be in the future"),
-    endTime: z.coerce
-        .date()
-        .refine(date => date > new Date(), "End time must be in the future"),
-    durationMinutes: z.number()
-        .int()
-        .positive("Duration must be a positive number"),
-    priceAtBooking: z.number()
-        .positive("Price must be a positive number"),
+        .refine(date => date.getTime() > Date.now(), "Start time must be in the future"),
     notes: z.string()
         .trim()
         .max(500, "Notes cannot exceed 500 characters")
         .optional()
-        .nullable(),
-    status: z.enum(['SCHEDULED', 'CONFIRMED', 'CANCELLED', 'COMPLETED'])
-        .default('SCHEDULED')
+        .nullable()
 })
 
-const reservationUpdateSchema = reservationSchema.partial();
+const reservationUpdateSchema = z.object({
+    startTime: z.coerce
+        .date()
+        .refine(date => date.getTime() > Date.now(), "Start time must be in the future")
+        .optional(),
+    status: z.enum(["SCHEDULED", "COMPLETED", "CANCELED"])
+        .optional(),
+    notes: z.string()
+        .trim()
+        .max(500, "Notes cannot exceed 500 characters")
+        .optional()
+        .nullable()
 
+}).refine(data => data.startTime || data.status || data.notes, {
+    message: "At least one field must be provided for update"
+});
 
 module.exports = { 
     reservationSchema,
