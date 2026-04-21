@@ -1,5 +1,5 @@
-const { fi } = require("zod/locales");
 const prisma = require("../config/prisma");
+const { getPagination, buildPaginationMeta } = require("../utils/pagination")
 
 class BarberRepository {
     
@@ -21,8 +21,9 @@ class BarberRepository {
         })
     }
 
-    async getAllBarbers(filters= {}, tx = null) {
+    async getAllBarbers(filters= {}, query = {}, tx = null) {
         const db = tx || prisma;
+        const { page, limit, skip, take } = getPagination(query);
         const where = {
             user: {}
         };
@@ -31,11 +32,20 @@ class BarberRepository {
             where.user.status = filters.status;
         }
 
-        return await db.barber.findMany({
-            where,
-            include: { user: true },
-            orderBy: { userId: 'desc' }
-        });
+        const [ data, total ] = await Promise.all([
+            db.barber.findMany({
+                where,
+                include: { user: true },
+                orderBy: { userId: 'desc' },
+                skip,
+                take: limit
+            }),
+            db.barber.count({where})
+        ]);
+        return {
+            data,
+            meta: buildPaginationMeta(total, page, limit)
+        };
     }
 
     async updateBarber(id, barberData, tx = null) {

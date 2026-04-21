@@ -24,10 +24,8 @@ class ReservationController {
             sendResponse(res,{
                 statusCode: 200,
                 message: 'Reservations retrieved successfully',
-                data: reservations,
-                meta: {
-                    quantity: reservations.length
-                }
+                data: reservations.data,
+                meta: reservations.meta
             });
         } catch (error) {
             next(error);

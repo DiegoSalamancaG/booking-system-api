@@ -8,7 +8,6 @@ const ServiceRepository = require("../repositories/servicesRepository");
 const { ValidationError, NotFoundError } = require("../errors/TypesError");
 const ReservationMapper = require("../mappers/reservationMapper");
 const { reservationSchema, reservationUpdateSchema } = require("../schemas/reservationSchema");
-const { PrismaClientUnknownRequestError } = require('@prisma/client/runtime/client');
 
 class ReservationService {
 
@@ -68,16 +67,18 @@ class ReservationService {
                 notes: notes || null,
                 status: 'SCHEDULED'
             }, tx);
-
             return ReservationMapper.toResponse(reservation);
-
         })
 
     }
 
-    async getAllReservations(filter={}){
-        const reservations = await ReservationRepository.getAllReservations(filter);
-        return ReservationMapper.toResponseList(reservations);
+    async getAllReservations(query){
+        const { page, limit, ...filters } = query;
+        const reservations = await ReservationRepository.getAllReservations(filters, { page, limit });
+        return  {
+            data: ReservationMapper.toResponseList(reservations.data),
+            meta: reservations.meta
+        }
     }
 
     async getReservationById(id){

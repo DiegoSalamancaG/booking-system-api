@@ -2,7 +2,8 @@ const ServiceRepository = require("../repositories/servicesRepository");
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
 const ServiceMapper = require("../mappers/serviceMapper");
 const { serviceSchema, serviceUpdateSchema } = require("../schemas/serviceSchema");
-const { parseBoolean } = require("../utils/queryParse")
+const { parseBoolean } = require("../utils/queryParse");
+const prisma = require("../config/prisma");
 
 class CatalogServicesService {
 
@@ -25,14 +26,16 @@ class CatalogServicesService {
         return ServiceMapper.toResponse(newService);
     }
 
-    async getAllServices(filters = {}) {
-        const parsedFilters = {};
-        if (filters.isActive !== undefined) {
-            parsedFilters.isActive = parseBoolean(filters.isActive);
+    async getAllServices(query) {
+        const { page, limit, ...filters } = query;
+        if(filters.isActive !== undefined){
+            filters.isActive = parseBoolean(filters.isActive)
         }
-
-        const services = await ServiceRepository.getAllServices(parsedFilters);
-        return ServiceMapper.toResponseList(services);
+        const services = await ServiceRepository.getAllServices(filters, {page, limit});
+        return {
+            data:ServiceMapper.toResponseList(services.data),
+            meta:services.meta
+        }
     }
 
     async getServiceById(id) {

@@ -15,15 +15,14 @@ class ServiceController {
         }
     }
 
-    async getAllServices(req,res,next){
+    async getAllServices(req, res, next){
         try {
             const services = await CatalogServicesService.getAllServices(req.query);
             sendResponse(res,{
-                message:"List of services",
-                data: services,
-                meta: {
-                    quantity: services.length
-                }
+                statusCode: 200,
+                message: "List of services",
+                data: services.data,
+                meta: services.meta
             })
         } catch (error) {
             next(error)

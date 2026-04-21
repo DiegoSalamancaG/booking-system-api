@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const { getPagination, buildPaginationMeta } = require("../utils/pagination")
 
 class UserRepository {
     
@@ -17,18 +18,27 @@ class UserRepository {
         });
     }
 
-    async getAllUsers(filters = {}, tx = null) {
+    async getAllUsers(filters = {}, query = {}, tx = null) {
         const db = tx || prisma;
-
+        const { page, limit, skip, take } = getPagination(query)
         const where = {};
 
         if (filters.status) where.status = filters.status;
         if (filters.role) where.role = filters.role;
 
-        return db.user.findMany({
-            where,
-            orderBy: { id: 'desc' }
-        });
+        const [data, total]= await Promise.all([
+            db.user.findMany({
+                where,
+                orderBy: { id: 'desc' },
+                skip,
+                take: limit
+            }),
+            db.user.count({ where })
+        ]);
+        return {
+            data,
+            meta: buildPaginationMeta(total, page, limit)
+        };
     }
 
     async getUserByEmail(email, tx = null) {

@@ -75,9 +75,13 @@ class UserService {
         return UserMapper.toResponse(user);
     }
 
-    async getAllUsers(filters = {}) {
-        const users = await UserRepository.getAllUsers(filters);
-        return UserMapper.toResponseList(users);
+    async getAllUsers(query) {
+        const { page, limit, ...filters } = query;
+        const users = await UserRepository.getAllUsers(filters, { page, limit });
+        return { 
+            data: UserMapper.toResponseList(users.data), 
+            meta: users.meta
+        };
     }
 
     async getAllActiveUsers() {

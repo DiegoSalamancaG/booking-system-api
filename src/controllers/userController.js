@@ -50,13 +50,11 @@ class UserController {
     async getAllUsers(req, res, next) {
         try {
             const users = await UserService.getAllUsers(req.query);
-
             sendResponse(res, {
+                statusCode: 200,
                 message: 'List of users',
-                data: users,
-                meta: {
-                    quantity: users.length
-                }
+                data: users.data,
+                meta: users.meta
             });
 
         } catch (error) {

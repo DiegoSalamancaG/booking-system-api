@@ -18,13 +18,12 @@ class BarberController {
 
     async getAllbarbers(req, res, next){
         try {
-            const barbers = await BarberService.getAllBarbers();
-            sendResponse(res,{
+            const barbers = await BarberService.getAllBarbers(req.query);
+            sendResponse(res, {
+                statusCode:200,
                 message: 'List of barbers',
-                data: barbers,
-                meta: {
-                    quantity: barbers.length
-                }
+                data: barbers.data,
+                meta: barbers.meta
             })
         } catch (error) {
             next(error);

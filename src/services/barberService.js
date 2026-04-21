@@ -46,9 +46,13 @@ class BarberService {
         return BarberMapper.toResponse(barber);
     }
 
-    async getAllBarbers(filters = {}) {
-        const barbers = await BarberRepository.getAllBarbers(filters);
-        return BarberMapper.toResponseList(barbers);
+    async getAllBarbers(query) {
+        const { page, limit, ...filters} = query;
+        const barbers = await BarberRepository.getAllBarbers(filters, { page, limit});
+        return {
+            data: BarberMapper.toResponseList(barbers.data),
+            meta: barbers.meta
+        };
     }
 
     async getBarberByUserId(userId) {
