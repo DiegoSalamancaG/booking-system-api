@@ -1,16 +1,14 @@
+const { formatDateToCl } = require("../utils/dateFormatter");
+
 class ReservationMapper {
     toResponse(reservation){
         if(!reservation) return null;
-
-        const startTime= reservation.startTime;
-        const endTime = reservation.endTime;
-
-        return {
+            return {
             reservationId: reservation.id,
-            startTimeUTC: startTime,
-            endTimeUTC: endTime,
-            starTimeLocal: startTime.toLocaleString("en-CL", { timeZone: "America/Santiago" }),
-            endTimeLocal: endTime.toLocaleString("en-CL", { timeZone: "America/Santiago" }),
+            startTimeUTC: reservation.startTime,
+            endTimeUTC: reservation.endTime,
+            starTimeLocal: formatDateToCl(reservation.startTime),
+            endTimeLocal: formatDateToCl(reservation.endTime),
             status: reservation.status,
             client: {
                 id: reservation.client.id,

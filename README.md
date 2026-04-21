@@ -42,6 +42,7 @@ src/
 ├── middlewares/ # Auth, RBAC y validación de esquemas
 ├── repositories/# Capa de acceso a datos (Queries directas)
 ├── routes/      # Definición de end-points de la API
+├── schemas/     # Capa de validación de esquemas y contratos de datos (Zod).
 ├── services/    # Lógica de negocio pura (Service Layer)
 ├── utils/       # Helpers y funciones de soporte
 ├── app.js       # Configuración de Express y Middleware Global de Errores
@@ -109,14 +110,13 @@ Sigue los pasos mostrados a continuacion para correr el proyecto:
 ## API Endpoints (Overview)
 
 **Auth**
-
+Servicio de autenticacion de usuarios y regristros
 - POST /api/v1/auth/login
 - POST /api/v1/auth/register
 
 **Users**
-
 Usuario del sistema
-- GET     /api/v1/users
+- GET     /api/v1/users/
 - GET     /api/v1/users/active
 - GET     /api/v1/users/:id
 - POST    /api/v1/users/
@@ -124,23 +124,28 @@ Usuario del sistema
 - DELETE  /api/v1/users/:id
 
 **Barber**
-
 Prestador del servicio (ej. barbero, medico, etc)
-- GET     /api/v1/barber
+- GET     /api/v1/barber/
 - GET     /api/v1/barber/:id
 - POST    /api/v1/barber/
 - PUT     /api/v1/barber/
 - DELETE  /api/v1/barber/:id
 
-**Bookings**   (proximamente)
+**Bookings**
 Citas/reservas creadas
+- GET     /api/v1/reservations/
+- GET     /api/v1/reservations/:id
+- POST    /api/v1/reservations/
+- PUT     /api/v1/reservations/:id
+- PATCH   /api/v1/reservations/cancel/:id
+- PATCH   /api/v1/reservations/complete/:id
 
 ---
 
 ## Git Workflow
 
 El proyecto utiliza un sistema de dos ramas principales:
-- **main:** Código estable y probado para producción.
+- **main:**    Código estable y probado para producción.
 - **develop:** Rama de desarrollo donde se integran las nuevas funcionalidades.
 
 ---
@@ -152,6 +157,7 @@ El proyecto utiliza un sistema de dos ramas principales:
 - [ ]Docker support.
 - [ ]Unit & integration testing.
 - [ ]CI/CD pipeline.
+- [ ]Logger.
 - [ ]Pagination & filtering on list endpoints.
 
 ---
