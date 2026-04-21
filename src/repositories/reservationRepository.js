@@ -74,6 +74,14 @@ class ReservationRepository {
         });
     }
 
+    async completeReservation(id, tx = null) {
+        const db = tx || prisma;
+         return db.reservation.update({
+            where: { id },
+            data: { status: 'COMPLETED' }
+         })
+    }
+
     async markAsNoShow(id, tx = null) {
         const db = tx || prisma;
 

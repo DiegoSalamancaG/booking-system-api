@@ -12,5 +12,7 @@ router.post("/", validate(reservationSchema), ReservationController.createReserv
 router.get("/", ReservationController.getAllReservations);
 router.get("/:id", ReservationController.getReservationById);
 router.put("/:id", validate(reservationUpdateSchema), ReservationController.updateReservation);
+router.patch("/cancel/:id", ReservationController.cancelReservation);
+router.patch("/complete/:id", ReservationController.completeReservation);
 
 module.exports = router;

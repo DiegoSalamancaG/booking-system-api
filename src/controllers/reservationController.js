@@ -7,6 +7,7 @@ class ReservationController {
     async createReservation(req, res, next){
         try {
             const reservation = await ReservationService.createReservation(req.body);
+            console.log("Created reservation:", reservation);
             sendResponse(res, {
                 statusCode: 201,
                 message: 'Reservation created successfully',
@@ -49,12 +50,39 @@ class ReservationController {
 
     async updateReservation(req, res, next){
         try {
-            const reservation = await ReservationController.updateReservation(req.params.id, req.body);
+            const id  = Number(req.params.id);
+            const reservation = await ReservationService.updateReservation(id, req.body);
             sendResponse(res, {
                 statusCode: 200,
                 message: 'Reservation updated successfully',
                 data: reservation
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async cancelReservation(req, res, next) {
+        try {
+            const id = Number(req.params.id);
+            const reservation = await ReservationService.cancelReservation(id);
+            sendResponse(res, {
+                message: 'Reservation cancelled successfully',
+                data: reservation
+            })
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async completeReservation(req, res, next){
+        try {
+            const id = Number(req.params.id);
+            const reservation = await ReservationService.completeReservation(id);
+            sendResponse(res, {
+                message: 'Reservation completed successfully',
+                data: reservation
+            })
         } catch (error) {
             next(error);
         }

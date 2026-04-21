@@ -1,10 +1,16 @@
 class ReservationMapper {
     toResponse(reservation){
         if(!reservation) return null;
+
+        const startTime= reservation.startTime;
+        const endTime = reservation.endTime;
+
         return {
             reservationId: reservation.id,
-            startTime: reservation.startTime,
-            endTime: reservation.endTime,
+            startTimeUTC: startTime,
+            endTimeUTC: endTime,
+            starTimeLocal: startTime.toLocaleString("en-CL", { timeZone: "America/Santiago" }),
+            endTimeLocal: endTime.toLocaleString("en-CL", { timeZone: "America/Santiago" }),
             status: reservation.status,
             client: {
                 id: reservation.client.id,
@@ -19,6 +25,7 @@ class ReservationMapper {
                 name: reservation.service.name
                 },
             notes: reservation.notes,
+            priceAtBooking: reservation.priceAtBooking,
             createdAt: reservation.createdAt,
         }
     }
