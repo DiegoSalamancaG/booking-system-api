@@ -18,7 +18,7 @@ class AuthService {
             throw new ValidationError(validation.error.issues[0].message);
         }
 
-        const newUser = await UserService.createUser(validation.data);
+        const newUser = await UserService.createUser(validation.data, null);
         const token = generateToken({
             id: newUser.id,
             role: newUser.role

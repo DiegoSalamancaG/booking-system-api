@@ -1,4 +1,3 @@
-const { ReservationStatus } = require("@prisma/client");
 const ReservationService = require("../services/reservationService");
 const { sendResponse }  = require("../utils/responseHandler");
 
@@ -6,8 +5,7 @@ class ReservationController {
 
     async createReservation(req, res, next){
         try {
-            const reservation = await ReservationService.createReservation(req.body);
-            console.log("Created reservation:", reservation);
+            const reservation = await ReservationService.createReservation(req.body, req.user);
             sendResponse(res, {
                 statusCode: 201,
                 message: 'Reservation created successfully',
@@ -49,7 +47,7 @@ class ReservationController {
     async updateReservation(req, res, next){
         try {
             const id  = Number(req.params.id);
-            const reservation = await ReservationService.updateReservation(id, req.body);
+            const reservation = await ReservationService.updateReservation(id, req.body, req.user);
             sendResponse(res, {
                 statusCode: 200,
                 message: 'Reservation updated successfully',

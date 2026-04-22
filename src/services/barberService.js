@@ -11,7 +11,8 @@ const { barberCreateSchema, barberUpdateSchema } = require("../schemas/barberSch
 
 class BarberService {
 
-    async createBarber(barberData) {
+    async createBarber(barberData, user) {
+        const userId = user?.id || null;
 
         const validation = barberCreateSchema.safeParse(barberData);
         if (!validation.success) {
@@ -26,7 +27,8 @@ class BarberService {
                 fullName,
                 email,
                 password,
-                role: 'BARBER'
+                role: 'BARBER',
+                createdBy: userId
             }, tx);
 
             const existingBarber = await BarberRepository.getBarberByUserId(newUser.id, tx);
@@ -37,7 +39,8 @@ class BarberService {
             const newBarber = await BarberRepository.createBarber({
                 userId: newUser.id,
                 experienceYears,
-                bio
+                bio,
+                createdBy: userId
             }, tx);
 
             return newBarber;
@@ -71,7 +74,8 @@ class BarberService {
         return BarberMapper.toResponse(barber);
     }
 
-    async updateBarber(userId, updateData) {
+    async updateBarber(userId, updateData, user) {
+        const creatorId = user?.id || null;
 
         const id = Number(userId);
         if (isNaN(id)) {
@@ -98,7 +102,8 @@ class BarberService {
 
             const barber = await BarberRepository.updateBarber(id, {
                 ...(experienceYears !== undefined && { experienceYears }),
-                ...(bio !== undefined && { bio })
+                ...(bio !== undefined && { bio }),
+                updatedBy:creatorId
             }, tx);
 
             return barber;

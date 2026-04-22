@@ -7,7 +7,8 @@ const prisma = require("../config/prisma");
 
 class CatalogServicesService {
 
-    async createService(serviceData) {
+    async createService(serviceData, user) {
+        const userId= user?.id || null;
 
         const validation = serviceSchema.safeParse(serviceData);
         if (!validation.success) {
@@ -20,7 +21,8 @@ class CatalogServicesService {
             name,
             description,
             durationMinutes,
-            price
+            price,
+            createdBy:userId
         });
 
         return ServiceMapper.toResponse(newService);
@@ -53,7 +55,8 @@ class CatalogServicesService {
         return ServiceMapper.toResponse(service);
     }
 
-    async updateService(id, serviceData) {
+    async updateService(id, serviceData, user) {
+        const userId = user?.id || null;
 
         const serviceId = Number(id);
         if (!serviceId || isNaN(serviceId)) {
@@ -70,6 +73,8 @@ class CatalogServicesService {
             throw new ValidationError('No valid data provided for update');
         }
 
+        const updatedBy= userId;
+        if(updatedBy) data.updatedBy=updatedBy
         const updatedService = await ServiceRepository.updateService(serviceId, data);
         if (!updatedService) {
             throw new NotFoundError('Service not found');

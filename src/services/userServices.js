@@ -7,8 +7,7 @@ const { userSchema, userUpdateSchema } = require('../schemas/userSchema');
 class UserService {
 
     // Método privado para crear user
-    async _createUserValidated(data, tx = null) {
-
+    async _createUserValidated(data, tx = null, createdBy = null) {
         const { email, password, fullName, role } = data;
 
         const existingUser = await UserRepository.getUserByEmail(email, tx);
@@ -22,31 +21,36 @@ class UserService {
             fullName,
             email,
             password: hashedPassword,
-            role: role || 'CLIENT'
+            role: role || 'CLIENT',
+            createdBy
         }, tx);
     }
 
     // Método público
-    async createUser(userData) {
+    async createUser(userData, user) {
+        const userId = user?.id || null;
+
         const validation = userSchema.safeParse(userData);
         if (!validation.success) {
             throw new ValidationError(validation.error.issues[0].message);
         }
 
-        const newUser = await this._createUserValidated(validation.data);
+        const newUser = await this._createUserValidated(validation.data, null, userId);
 
         return UserMapper.toResponse(newUser);
     }
 
     // Método interno para usar dentro barberService
-    async createUserInternal(userData, tx = null) {
+    async createUserInternal(userData, tx = null, user) {
+        const userId = user?.id || null;
+
         const validation = userSchema.safeParse(userData);
 
         if (!validation.success) {
             throw new ValidationError(validation.error.issues[0].message);
         }
 
-        return await this._createUserValidated(validation.data, tx);
+        return await this._createUserValidated(validation.data, tx, userId);
     }
 
     async getUserByEmail(email) {
@@ -89,7 +93,9 @@ class UserService {
         return UserMapper.toResponseList(users);
     }
 
-    async updateUser(id, userData) {
+    async updateUser(id, userData, user) {
+        const userId = user?.id || null;
+
         if (!id || isNaN(id)) {
             throw new ValidationError('Invalid ID');
         }
@@ -109,7 +115,10 @@ class UserService {
             data.password = await hashPassword(data.password);
         }
 
-        const updatedUser = await UserRepository.updateUser(id, data);
+        const updatedUser = await UserRepository.updateUser(id, {
+            ...data,
+            updatedBy:userId
+        });
         if (!updatedUser) {
             throw new NotFoundError('User not found');
         }

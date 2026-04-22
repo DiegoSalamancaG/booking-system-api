@@ -1,3 +1,5 @@
+const { formatDateToCl } = require("../utils/dateFormatter");
+
 class UserMapper {
     toResponse(user) {
         if(!user) return null;
@@ -7,8 +9,8 @@ class UserMapper {
             email: user.email,
             role: user.role,
             status: user.status,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt
+            createdAt: formatDateToCl(user.createdAt),
+            updatedAt: formatDateToCl(user.updatedAt),
         }
     }
 

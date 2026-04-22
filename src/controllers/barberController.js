@@ -5,7 +5,7 @@ class BarberController {
 
     async createBarber(req, res, next){
         try {
-            const barber = await BarberService.createBarber(req.body);
+            const barber = await BarberService.createBarber(req.body, req.user);
             sendResponse(res, {
                 statusCode: 201,
                 message: 'Barber created successfully',
@@ -46,7 +46,7 @@ class BarberController {
     async updateBarber(req, res, next){
         try {
             const id = Number(req.params.id);
-            const updatedBarber = await BarberService.updateBarber(id, req.body);
+            const updatedBarber = await BarberService.updateBarber(id, req.body, req.user);
             sendResponse(res, {
                 message: 'Barber updated successfully',
                 data: updatedBarber

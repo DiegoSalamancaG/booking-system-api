@@ -158,7 +158,7 @@ El proyecto utiliza un sistema de dos ramas principales:
 - [ ]Unit & integration testing.
 - [ ]CI/CD pipeline.
 - [ ]Logger.
-- [ ]Pagination & filtering on list endpoints.
+- [✓]Pagination & filtering on list endpoints.
 
 ---
 

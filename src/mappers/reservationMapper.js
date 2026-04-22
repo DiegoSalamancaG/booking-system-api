@@ -24,7 +24,7 @@ class ReservationMapper {
                 },
             notes: reservation.notes,
             priceAtBooking: reservation.priceAtBooking,
-            createdAt: reservation.createdAt,
+            createdAt: formatDateToCl(reservation.createdAt),
         }
     }
 

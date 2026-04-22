@@ -4,14 +4,15 @@ const ReservationRepository =require("../repositories/reservationRepository");
 const UserRepository = require("../repositories/userRepository");
 const BarberRepository = require("../repositories/barberRepository");
 const ServiceRepository = require("../repositories/servicesRepository");
+const ReservationMapper = require("../mappers/reservationMapper");
 
 const { ValidationError, NotFoundError } = require("../errors/TypesError");
-const ReservationMapper = require("../mappers/reservationMapper");
 const { reservationSchema, reservationUpdateSchema } = require("../schemas/reservationSchema");
 
 class ReservationService {
 
-    async createReservation(reservationData) {
+    async createReservation(reservationData, user) {
+        const userId = user?.id || null;
         const validation = reservationSchema.safeParse(reservationData);
         if (!validation.success) {
             console.log(validation.error.issues);
@@ -65,7 +66,8 @@ class ReservationService {
                 durationMinutes: service.durationMinutes,
                 priceAtBooking: service.price,
                 notes: notes || null,
-                status: 'SCHEDULED'
+                status: 'SCHEDULED',
+                createdBy: userId
             }, tx);
             return ReservationMapper.toResponse(reservation);
         })
@@ -93,10 +95,11 @@ class ReservationService {
         return ReservationMapper.toResponse(reservation);
     }
 
-    async updateReservation(id, reservationData) {
-    if (!id || isNaN(id)) {
-        throw new ValidationError("Invalid reservation ID");
-    }
+    async updateReservation(id, reservationData, user) {
+        const userId = user?.id || null;
+        if (!id || isNaN(id)) {
+            throw new ValidationError("Invalid reservation ID");
+        }
         return await prisma.$transaction(async (tx) => {
             const validation = reservationUpdateSchema.safeParse(reservationData);
             if (!validation.success) {
@@ -157,7 +160,8 @@ class ReservationService {
                 startTime: start,
                 endTime: end,
                 serviceId: finalServiceId,
-                priceAtBooking: service.price
+                priceAtBooking: service.price,
+                updatedBy: userId
             };
 
             if (data.status) {

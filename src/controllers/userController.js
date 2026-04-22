@@ -5,7 +5,7 @@ class UserController {
 
     async createUser(req, res, next) {
         try {
-            const user = await UserService.createUser(req.body);
+            const user = await UserService.createUser(req.body, req.user);
 
             sendResponse(res, {
                 statusCode: 201,
@@ -66,7 +66,7 @@ class UserController {
     async updateUser(req, res, next) {
         try {
             const id = Number(req.params.id);
-            const updatedUser = await UserService.updateUser(id, req.body);
+            const updatedUser = await UserService.updateUser(id, req.body, req.user);
 
             sendResponse(res, {
                 message: 'User updated successfully',

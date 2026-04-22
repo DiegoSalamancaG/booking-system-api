@@ -4,7 +4,7 @@ const { sendResponse } = require("../utils/responseHandler");
 class ServiceController {
     async createService(req,res,next){
         try {
-            const service = await CatalogServicesService.createService(req.body);
+            const service = await CatalogServicesService.createService(req.body, req.user);
             sendResponse(res,{
                 statusCode: 201,
                 message: "Service created successfully",
@@ -47,7 +47,7 @@ class ServiceController {
     async updateService(req, res, next) {
         try {
             const id = Number(req.params.id);
-            const updatedService = await CatalogServicesService.updateService(id, req.body);
+            const updatedService = await CatalogServicesService.updateService(id, req.body, req.user);
             sendResponse(res, {
                 message: "Service updated successfully",
                 data: updatedService
