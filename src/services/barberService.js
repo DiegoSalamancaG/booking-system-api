@@ -3,6 +3,7 @@ const prisma = require("../config/prisma");
 const BarberRepository = require("../repositories/barberRepository");
 const UserRepository = require("../repositories/userRepository");
 const UserService = require("../services/userServices");
+const logger = require("../config/logger");
 
 const BarberMapper = require("../mappers/barberMapper");
 
@@ -43,6 +44,7 @@ class BarberService {
                 createdBy: userId
             }, tx);
 
+            logger.info(`Barber created: id ${newUser.id} | name: ${newUser.fullName} | Added By ${userId}`)
             return newBarber;
         });
 
@@ -106,6 +108,7 @@ class BarberService {
                 updatedBy:creatorId
             }, tx);
 
+            logger.info(`barber Updated: Id ${barber.id} | name: ${barber.fullName} | UpdatedBy: ${creatorId}`)
             return barber;
         });
 
@@ -124,6 +127,7 @@ class BarberService {
             throw new NotFoundError('Barber not found');
         }
 
+        logger.warn(`barber Deactivated: Id ${id} | name: ${deactivatedBarber.fullName}`)
         return BarberMapper.toResponse(deactivatedBarber);
     }
 

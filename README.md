@@ -17,6 +17,7 @@ Construida con **Node.js, Express y PostgreSQL**, siguiendo principios de arquit
 - **Validation Layer:** Validación de esquemas y datos de entrada (Zod/Joi) antes de procesar lógica de negocio.
 - **Clean Architecture:** Separación clara de responsabilidades (Controllers, Services, Repositories).
 - **Database Integrity:** Uso de transacciones y restricciones para garantizar la consistencia de las reservas.
+- **Centralized Error LOgging:** Monitoreo en tiempo real de problemas, para el lado del cliente y del servidor.
 
 ---
 
@@ -159,6 +160,7 @@ El proyecto utiliza un sistema de dos ramas principales:
 - [ ]CI/CD pipeline.
 - [ ]Logger.
 - [✓]Pagination & filtering on list endpoints.
+- [✓]Data Auditor Layer to track record creations and updates.
 
 ---
 

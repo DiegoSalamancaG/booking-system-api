@@ -1,12 +1,11 @@
-const { comparePassword } = require("../utils/auth/comparePassword");
-const { generateToken } = require("../utils/auth/jwt");
-
-const { ValidationError, ConflictError } = require('../errors/TypesError');
-
 const UserRepository = require("../repositories/userRepository");
 const UserService = require("../services/userServices");
 const UserMapper = require("../mappers/userMapper");
+const logger = require("../config/logger");
 
+const { comparePassword } = require("../utils/auth/comparePassword");
+const { generateToken } = require("../utils/auth/jwt");
+const { ValidationError, ConflictError } = require('../errors/TypesError');
 const { registerSchema, loginSchema } = require("../schemas/authSchema");
 
 class AuthService {
@@ -40,6 +39,7 @@ class AuthService {
         const { email, password } = validation.data;
         const user = await UserRepository.getUserByEmail(email);
         if (!user) {
+            logger.warn(`Unauthorized access attempt: ${email}`);
             throw new ValidationError('Invalid credentials');
         }
 
@@ -58,6 +58,7 @@ class AuthService {
             role: user.role
         });
 
+        logger.info(`Session started for: ${email}`)
         return {
             token,
             user: UserMapper.toResponse(user)

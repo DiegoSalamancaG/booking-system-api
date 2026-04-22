@@ -5,6 +5,7 @@ const UserRepository = require("../repositories/userRepository");
 const BarberRepository = require("../repositories/barberRepository");
 const ServiceRepository = require("../repositories/servicesRepository");
 const ReservationMapper = require("../mappers/reservationMapper");
+const logger = require("../config/logger");
 
 const { ValidationError, NotFoundError } = require("../errors/TypesError");
 const { reservationSchema, reservationUpdateSchema } = require("../schemas/reservationSchema");
@@ -69,6 +70,8 @@ class ReservationService {
                 status: 'SCHEDULED',
                 createdBy: userId
             }, tx);
+
+            logger.info(`Reservation creadted: Id ${reservation.id} | client: ${clientId} | barber:${barberId} | service:${serviceId}`);
             return ReservationMapper.toResponse(reservation);
         })
 
@@ -225,8 +228,6 @@ class ReservationService {
         const cancelled = await ReservationRepository.cancelReservation(id);
         return ReservationMapper.toResponse(cancelled);
     }
-
-
 }
 
 module.exports = new ReservationService();

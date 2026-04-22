@@ -1,9 +1,11 @@
+const prisma = require("../config/prisma");
 const ServiceRepository = require("../repositories/servicesRepository");
-const { ValidationError, NotFoundError } = require('../errors/TypesError');
 const ServiceMapper = require("../mappers/serviceMapper");
+const logger = require("../config/logger");
+
+const { ValidationError, NotFoundError } = require('../errors/TypesError');
 const { serviceSchema, serviceUpdateSchema } = require("../schemas/serviceSchema");
 const { parseBoolean } = require("../utils/queryParse");
-const prisma = require("../config/prisma");
 
 class CatalogServicesService {
 
@@ -25,6 +27,7 @@ class CatalogServicesService {
             createdBy:userId
         });
 
+        logger.info(`Service created: Id ${newService.id} | name: ${name} | Added by: ${userId}`)
         return ServiceMapper.toResponse(newService);
     }
 
@@ -80,6 +83,7 @@ class CatalogServicesService {
             throw new NotFoundError('Service not found');
         }
 
+        logger.info(`Service updated: Id ${serviceId} | name: ${updatedService.name}`)
         return ServiceMapper.toResponse(updatedService);
     }
 
@@ -95,6 +99,7 @@ class CatalogServicesService {
             throw new NotFoundError("Service not found");
         }
 
+        logger.warn(`Service Deactivated: Id ${serviceId} | name: ${deactivatedService.name}`)
         return ServiceMapper.toResponse(deactivatedService);
     }
 }

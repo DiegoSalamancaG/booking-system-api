@@ -1,5 +1,7 @@
 const UserRepository = require("../repositories/userRepository");
 const UserMapper = require('../mappers/userMapper');
+const logger = require("../config/logger");
+
 const { hashPassword } = require('../utils/auth/hashPassword');
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
 const { userSchema, userUpdateSchema } = require('../schemas/userSchema');
@@ -37,6 +39,7 @@ class UserService {
 
         const newUser = await this._createUserValidated(validation.data, null, userId);
 
+        logger.info(`User created: id ${newUser.id} | name: ${newUser.fullName} | created by: ${userId}`)
         return UserMapper.toResponse(newUser);
     }
 
@@ -123,6 +126,7 @@ class UserService {
             throw new NotFoundError('User not found');
         }
 
+        logger.info(`User updated: id ${updatedUser.id} | name: ${updatedUser.fullName} | updated by: ${userId}`)
         return UserMapper.toResponse(updatedUser);
     }
 
@@ -135,7 +139,8 @@ class UserService {
         if (!deactivatedUser) {
             throw new NotFoundError('User not found');
         }
-
+        
+        logger.warn(`User deactivated: Id ${id} | name: ${deactivatedUser.fullName}`)
         return UserMapper.toResponse(deactivatedUser);
     }
 }
