@@ -1,7 +1,7 @@
 {
   "name": "auth-api",
   "version": "1.0.0",
-  "description": "A simple authentication API using Node.js, Express, and Prisma",
+  "description": "A authentication, booking service API using Node.js, Express, and Prisma",
   "main": "server.js",
   "devDependencies": {
     "prisma": "^7.7.0"
@@ -13,6 +13,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.5.0",
     "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.6.0",
     "bcrypt": "^6.0.0",
@@ -24,6 +25,8 @@
     "morgan": "^1.10.1",
     "nodemon": "^3.1.14",
     "pg": "^8.20.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",
     "zod": "^4.3.6"
   }

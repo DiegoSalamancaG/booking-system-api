@@ -6,4 +6,7 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+    console.log(`localhost:${PORT}/api/v1`)
+    console.log(`Swagger documentation:`);
+    console.log(`localhost:${PORT}/api-docs/`)
 })

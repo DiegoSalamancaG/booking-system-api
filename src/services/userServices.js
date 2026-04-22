@@ -4,7 +4,7 @@ const logger = require("../config/logger");
 
 const { hashPassword } = require('../utils/auth/hashPassword');
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
-const { userSchema, userUpdateSchema } = require('../schemas/userSchema');
+const { userCreateSchema, userUpdateSchema } = require('../schemas/userSchema');
 
 class UserService {
 
@@ -32,7 +32,7 @@ class UserService {
     async createUser(userData, user) {
         const userId = user?.id || null;
 
-        const validation = userSchema.safeParse(userData);
+        const validation = userCreateSchema.safeParse(userData);
         if (!validation.success) {
             throw new ValidationError(validation.error.issues[0].message);
         }
@@ -47,7 +47,7 @@ class UserService {
     async createUserInternal(userData, tx = null, user) {
         const userId = user?.id || null;
 
-        const validation = userSchema.safeParse(userData);
+        const validation = userCreateSchema.safeParse(userData);
 
         if (!validation.success) {
             throw new ValidationError(validation.error.issues[0].message);

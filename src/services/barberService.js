@@ -60,14 +60,14 @@ class BarberService {
         };
     }
 
-    async getBarberByUserId(userId) {
+    async getBarberById(userId) {
         const id = Number(userId);
 
         if (isNaN(id)) {
             throw new ValidationError('Invalid ID');
         }
 
-        const barber = await BarberRepository.getBarberByUserId(id);
+        const barber = await BarberRepository.getBarberById(id);
 
         if (!barber) {
             throw new NotFoundError('Barber not found');
