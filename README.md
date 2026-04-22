@@ -2,6 +2,9 @@
 
 ![Node.js](https://img.shields.io/badge/Node.js-18.x-green)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=flat&logo=prisma)
+![Zod](https://img.shields.io/badge/Zod-Validation-3E67B1?style=flat&logo=zod)
+![Winston](https://img.shields.io/badge/Winston-Logging-gray?style=flat)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 Backend REST API profesional para la gestión de reservas, usuarios y disponibilidad. 
@@ -11,13 +14,16 @@ Construida con **Node.js, Express y PostgreSQL**, siguiendo principios de arquit
 
 ## Features
 
+- **Robust Data Auditing:** Seguimiento automatico de los metadatos registrados en todas las entidades para trazabilidad.
+- **Advanced Observability:** Sistema de registro centralizado mediante WINSTON.
+- **Smart Pagination & Filtering:** Puntos de acceso a listas optimizados con paginación que garantiza rendimiento en conjuntos de datos grandes.
 - **User Management:** Registro y autenticación con control de acceso basado en roles (RBAC).
 - **Professional Error Handling:** Sistema centralizado de errores con clases personalizadas (400, 401, 403, 404, 409, 500).
 - **Security:** Autenticación basada en JWT y protección de rutas mediante middlewares.
 - **Validation Layer:** Validación de esquemas y datos de entrada (Zod/Joi) antes de procesar lógica de negocio.
 - **Clean Architecture:** Separación clara de responsabilidades (Controllers, Services, Repositories).
 - **Database Integrity:** Uso de transacciones y restricciones para garantizar la consistencia de las reservas.
-- **Centralized Error LOgging:** Monitoreo en tiempo real de problemas, para el lado del cliente y del servidor.
+- **Centralized Error Logging:** Monitoreo en tiempo real de problemas, para el lado del cliente y del servidor.
 
 ---
 
@@ -36,6 +42,7 @@ Construida con **Node.js, Express y PostgreSQL**, siguiendo principios de arquit
 
 ```text
 prisma/          # Schema de la base de datos y migraciones
+logs/            # Archivos de registro persistentes
 src/
 ├── config/      # Configuraciones de DB y variables de entorno
 ├── controllers/ # Orquestación de peticiones y respuestas
@@ -76,7 +83,7 @@ Sigue los pasos mostrados a continuacion para correr el proyecto:
     cd booking-system-api
     ```
 
-2. **Install dependencys:**
+2. **Install dependencies:**
 
     ```bash
     npm install
@@ -158,7 +165,7 @@ El proyecto utiliza un sistema de dos ramas principales:
 - [ ]Docker support.
 - [ ]Unit & integration testing.
 - [ ]CI/CD pipeline.
-- [ ]Logger.
+- [✓]Logger.
 - [✓]Pagination & filtering on list endpoints.
 - [✓]Data Auditor Layer to track record creations and updates.
 
