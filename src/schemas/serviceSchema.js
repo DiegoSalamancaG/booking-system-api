@@ -23,7 +23,7 @@ const serviceCreateSchema = z.object({
         default(true)
         .optional()
         .openapi({example: true})
-});
+}).openapi("ServiceCreate");
 
 const serviceUpdateSchema = serviceCreateSchema.partial().openapi("ServiceUpdate");
 
@@ -34,7 +34,7 @@ const serviceResponseSchema = z.object({
     durationMinutes: z.number().openapi({example:30}),
     price: z.number().openapi({example:10000}),
     isActive: z.boolean().openapi({example:true})
-})
+}).openapi("ServiceResponse");
     
 module.exports = {
     serviceCreateSchema,

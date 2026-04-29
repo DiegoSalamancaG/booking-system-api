@@ -8,13 +8,13 @@ const ReservationMapper = require("../mappers/reservationMapper");
 const logger = require("../config/logger");
 
 const { ValidationError, NotFoundError } = require("../errors/TypesError");
-const { reservationSchema, reservationUpdateSchema } = require("../schemas/reservationSchema");
+const { reservationCreateSchema, reservationUpdateSchema } = require("../schemas/reservationSchema");
 
 class ReservationService {
 
     async createReservation(reservationData, user) {
         const userId = user?.id || null;
-        const validation = reservationSchema.safeParse(reservationData);
+        const validation = reservationCreateSchema.safeParse(reservationData);
         if (!validation.success) {
             console.log(validation.error.issues);
             throw new ValidationError(validation.error.issues[0].message);
