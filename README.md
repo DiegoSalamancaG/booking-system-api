@@ -46,6 +46,7 @@ logs/            # Archivos de registro persistentes
 src/
 ├── config/      # Configuraciones de DB y variables de entorno
 ├── controllers/ # Orquestación de peticiones y respuestas
+├── docs/        # Documentación API via swagger y openApi
 ├── errors/      # Clases de error personalizadas (CustomError, ValidationError, etc.)
 ├── middlewares/ # Auth, RBAC y validación de esquemas
 ├── repositories/# Capa de acceso a datos (Queries directas)
@@ -161,7 +162,7 @@ El proyecto utiliza un sistema de dos ramas principales:
 ## Future Improvements
 
 - [ ]Automatic NO_SHOW marking (scheduled job / cron).
-- [ ]Swagger API documentation.
+- [✓]Swagger API documentation.
 - [ ]Docker support.
 - [ ]Unit & integration testing.
 - [ ]CI/CD pipeline.
