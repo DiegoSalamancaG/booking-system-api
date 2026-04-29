@@ -13,7 +13,7 @@ registry.registerPath({
     path: "/services",
     tags:["Services"],
     summary: "Obtener todos los servicios",
-    description: "Retorna una lista de usuarios. Requiere rol ADMIN",
+    description: "Retorna una lista de servicios. Requiere rol ADMIN",
 
     security: [{ bearerAuth:[] }],
 

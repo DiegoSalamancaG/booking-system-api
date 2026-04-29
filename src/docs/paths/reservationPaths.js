@@ -64,7 +64,7 @@ registry.registerPath({
       description: "No autenticado",
     },
     404: {
-      description: "Servicio no encontrado",
+      description: "Reserva no encontrada",
     },
   },
 })
@@ -184,7 +184,7 @@ registry.registerPath({
             description: "No autorizado(requiere ROL)",
         },
         404: {
-            description: "Servicio no encontrado",
+            description: "Reserva no encontrada",
         }
     }
 })
@@ -216,7 +216,7 @@ registry.registerPath({
             description: "No autorizado(requiere ROL)",
         },
         404: {
-            description: "Servicio no encontrado",
+            description: "Reserva no encontrada",
         }
     }
 })
