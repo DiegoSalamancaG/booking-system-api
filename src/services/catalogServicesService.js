@@ -4,7 +4,7 @@ const ServiceMapper = require("../mappers/serviceMapper");
 const logger = require("../config/logger");
 
 const { ValidationError, NotFoundError } = require('../errors/TypesError');
-const { serviceSchema, serviceUpdateSchema } = require("../schemas/serviceSchema");
+const { serviceCreateSchema, serviceUpdateSchema } = require("../schemas/serviceSchema");
 const { parseBoolean } = require("../utils/queryParse");
 
 class CatalogServicesService {
@@ -12,7 +12,7 @@ class CatalogServicesService {
     async createService(serviceData, user) {
         const userId= user?.id || null;
 
-        const validation = serviceSchema.safeParse(serviceData);
+        const validation = serviceCreateSchema.safeParse(serviceData);
         if (!validation.success) {
             throw new ValidationError(validation.error.issues[0].message);
         }

@@ -43,7 +43,7 @@ const userResponseSchema = z.object({
 }).openapi("UserResponse");
 
 module.exports = {
-    userCreateSchema,
-    userUpdateSchema,
-    userResponseSchema
+  userCreateSchema,
+  userUpdateSchema,
+  userResponseSchema
 };
