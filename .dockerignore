@@ -5,3 +5,10 @@ Dockerfile
 .env
 .git
 .gitignore
+
+# Archivos adicionales recomendados
+dist
+build
+.vscode
+README.md
+*.pdf
