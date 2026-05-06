@@ -12,11 +12,11 @@ const registerSchema = z.object({
     .trim()
     .toLowerCase()
     .email({ message: "Invalid email format" })
-    .openapi({ example: "diego@test.com" }),
+    .openapi({ example: "admin@test.com" }),
     
   password: z.string()
     .min(4, { message: "Password must be at least 4 characters long" })
-    .openapi({ example: "1234" })
+    .openapi({ example: "1234test" })
 }).openapi("registerSchema");
 
 const loginSchema = z.object({
@@ -27,7 +27,7 @@ const loginSchema = z.object({
     .openapi({ example: "admin@test.com" }),
   password: z.string()
     .min(4, { message: "Password must be at least 4 characters long" })
-    .openapi({ example: "1234" }), 
+    .openapi({ example: "1234test" }), 
 }).openapi("loginSchema");
 
 const authResponseSchema = z.object({
