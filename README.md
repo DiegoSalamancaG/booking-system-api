@@ -110,8 +110,14 @@ Sigue los pasos mostrados a continuacion para correr el proyecto:
 
 5.  **Initialize the App**
 
+    Si trabajas en local, debes usar
     ```bash
     npm run dev
+    ```
+
+    Ahora si contuamos trabajando desde docker, para levantar tanto la app como el BD, usarémos el siguiente comando
+    ```bash
+    docker-compose up --build
     ```
 
 ---
@@ -163,7 +169,7 @@ El proyecto utiliza un sistema de dos ramas principales:
 
 - [ ]Automatic NO_SHOW marking (scheduled job / cron).
 - [✓]Swagger API documentation.
-- [ ]Docker support.
+- [✓]Docker support.
 - [ ]Unit & integration testing.
 - [ ]CI/CD pipeline.
 - [✓]Logger.

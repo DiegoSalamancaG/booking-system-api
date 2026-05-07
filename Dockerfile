@@ -1,6 +1,9 @@
 # Imagen base de Node LTS
 FROM node:20-alpine
 
+# Instalamos las dependencias necesarias para Prisma
+RUN apk add --no-cache openssl libc6-compat
+
 # Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
