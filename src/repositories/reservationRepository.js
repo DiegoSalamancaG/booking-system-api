@@ -86,7 +86,16 @@ class ReservationRepository {
 
         return db.reservation.update({
             where: { id },
-            data: { status: 'CANCELLED' }
+            data: { status: 'CANCELLED' },
+            include: {
+                client: true,
+                barber: {
+                    include: {
+                        user: true
+                    }
+                },
+                service: true
+            }
         });
     }
 
@@ -94,7 +103,16 @@ class ReservationRepository {
         const db = tx || prisma;
          return db.reservation.update({
             where: { id },
-            data: { status: 'COMPLETED' }
+            data: { status: 'COMPLETED' },
+            include: {
+                client: true,
+                barber: {
+                    include: {
+                        user: true
+                    }
+                },
+                service: true
+            }
          })
     }
 
