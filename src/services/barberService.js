@@ -28,11 +28,11 @@ class BarberService {
                 fullName,
                 email,
                 password,
-                role: 'BARBER',
+                role: "BARBER",
                 createdBy: userId
             }, tx);
 
-            const existingBarber = await BarberRepository.getBarberByUserId(newUser.id, tx);
+            const existingBarber = await BarberRepository.getBarberById(newUser.id, tx);
             if (existingBarber) {
                 throw new ValidationError('Barber already exists for this user');
             }
@@ -76,31 +76,23 @@ class BarberService {
         return BarberMapper.toResponse(barber);
     }
 
-    async updateBarber(userId, updateData, user) {
-        const creatorId = user?.id || null;
+    async updateBarber(userId, updateData, currentUser) {
+        const creatorId = currentUser?.id || null;
 
         const id = Number(userId);
-        if (isNaN(id)) {
-            throw new ValidationError('Invalid ID');
-        }
+        if (isNaN(id)) throw new ValidationError('Invalid ID');
 
         const validation = barberUpdateSchema.safeParse(updateData);
-        if (!validation.success) {
-            throw new ValidationError(validation.error.issues[0].message);
-        }
+        if (!validation.success) throw new ValidationError(validation.error.issues[0].message);
 
         const { fullName, experienceYears, bio } = validation.data;
 
         const updatedBarber = await prisma.$transaction(async (tx) => {
 
-            const existingBarber = await BarberRepository.getBarberByUserId(id, tx);
-            if (!existingBarber) {
-                throw new NotFoundError('Barber not found');
-            }
+            const existingBarber = await BarberRepository.getBarberById(id, tx);
+            if(!existingBarber) throw new NotFoundError('Barber not found');
             
-            if (fullName !== undefined) {
-                await UserRepository.updateUser(id, { fullName }, tx);
-            }
+            if (fullName !== undefined) await UserRepository.updateUser(id, { fullName }, tx);
 
             const barber = await BarberRepository.updateBarber(id, {
                 ...(experienceYears !== undefined && { experienceYears }),
@@ -108,7 +100,7 @@ class BarberService {
                 updatedBy:creatorId
             }, tx);
 
-            logger.info(`barber Updated: Id ${barber.id} | name: ${barber.fullName} | UpdatedBy: ${creatorId}`)
+            logger.info(`barber Updated: Id ${barber.userId} | name: ${barber.user.fullName} | UpdatedBy: ${creatorId}`)
             return barber;
         });
 

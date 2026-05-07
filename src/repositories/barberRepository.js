@@ -54,8 +54,10 @@ class BarberRepository {
         const existing = await db.barber.findUnique({ where: { userId: id } });
         if (!existing) return null;
 
+        const { fullName, email} = barberData;
+
         return await db.barber.update({
-            where: { id },
+            where: { userId:id },
             data: barberData,
             include: { user: true }
         });

@@ -19,6 +19,16 @@ const barberCreateSchema = userCreateSchema
 
 const barberUpdateSchema = barberSchema
   .partial()
+  .extend({
+    fullName: z.string()
+      .trim()
+      .min(3, "Full name must have at least 3 characters")
+      .max(100, "Full name cannot exceed 100 characters")
+      .optional(),
+    email: z.string()
+      .email()
+      .optional()
+  })
   .openapi("BarberUpdate");
 
 const barberResponseSchema = z.object({
