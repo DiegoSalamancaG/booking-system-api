@@ -53,9 +53,9 @@ src/
 ├── routes/      # Definición de end-points de la API
 ├── schemas/     # Capa de validación de esquemas y contratos de datos (Zod).
 ├── services/    # Lógica de negocio pura (Service Layer)
-├── utils/       # Helpers y funciones de soporte
-├── app.js       # Configuración de Express y Middleware Global de Errores
-└── server.js    # Punto de entrada del servidor
+└── utils/       # Helpers y funciones de soporte
+app.js           # Configuración de Express y Middleware Global de Errores
+server.js        # Punto de entrada del servidor
 ```
 
 ---
@@ -103,6 +103,9 @@ Sigue los pasos mostrados a continuacion para correr el proyecto:
     ```bash
     PORT=yourPort
     DATABASE_URL=yourDDBBUrl
+    POSTGRE_USER=yourUser
+    POSTGRE_PASSWORD=yourPassword
+    POSTGRE_DB=YourDBName
     JWT_SECRET=yourSecretKey
     JWT_EXPIRES=1h
     NODE_ENV=development
