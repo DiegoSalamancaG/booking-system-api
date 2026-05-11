@@ -37,11 +37,18 @@ class ConflictError extends CustomError {
     }
 }
 
+class RateLimitError extends CustomError {
+    constructor(message = "Too many request"){
+    super(message, 429); // Código de estado HTTP para peticiones sobre el limite
+    }
+}
+
 module.exports = {
     ValidationError,
     NotFoundError,
     UnauthorizedError,
     ForbiddenError,
     InternalServerError,
-    ConflictError
+    ConflictError,
+    RateLimitError
 }

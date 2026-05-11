@@ -1,4 +1,3 @@
-const { url } = require("zod");
 const logger = require("../config/logger");
 
 const errorMiddleware = (err, req, res, next) => {
